@@ -76,20 +76,21 @@
 
     /* Helper text tooltip */
     .label {
-      position: absolute;
-      top: 50%;
-      left: calc(100% + 10px);
-      transform: translateY(-50%);
-      background: #101010;
-      border: 1px solid #1e1e1e;
-      padding: 6px 10px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 160ms ease;
-    }
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 10px);
+  transform: translateY(-50%);
+  background: #101010;
+  border: 1px solid #1e1e1e;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+  color: white;   /* 👈 add this line */
+}
     .nav-item:hover .label,
     .nav-item:focus-within .label {
       opacity: 1;
@@ -244,6 +245,7 @@
       to { --angle: 1turn; }
     }
   </style>
+
 
 
 
