@@ -6,7 +6,7 @@
     "published": "2009-05-01",
     "updated": "2025-08-25",
     "platforms": ["PS3"],
-    "score": 7.5,
+    "score": 8,
     "genres": ["Action", "Hack-and-Slash"],
     "series": "X-Men",
     "tags": ["Licensed", "Movie tie-in", "Retro"],
@@ -31,7 +31,7 @@
     "published": "2002-11-12",
     "updated": "2025-08-25",
     "platforms": ["PS2"],
-    "score": 7.0,
+    "score": 8.5,
     "genres": ["Shooter", "Tactical"],
     "series": "Tom Clancy's Ghost Recon",
     "tags": ["Tactical", "Squad-based", "Military"],
@@ -57,7 +57,7 @@
     "published": "2011-09-06",
     "updated": "2025-08-25",
     "platforms": ["PS3"],
-    "score": 8.5,
+    "score": 8.7,
     "genres": ["Shooter", "Action"],
     "series": "Resistance",
     "tags": ["Sci-Fi", "First-Person Shooter"],
@@ -81,3 +81,4 @@
     "bodyFormat": "markdown"
   }
 ]
+
