@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Core Loop • Reviews</title>
+  <meta name="description" content="Browse Core Loop’s review archive with filters for platform and genre." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><circle cx=%2250%22 cy=%2250%22 r=%2240%22 fill=%22%2372f5e6%22/></svg>">
+  <style>
+    :root{--bg:#0a0b10;--fg:#e9ecf4;--muted:#a9b1c6;--panel:#0f1320;--border:#1a1f2f;--chip:#121829;--chipB:#202741;--ghost:#1e2440;--accent:#72f5e6;--accentSoft:#72f5e622;--radius:18px}
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,Segoe UI,Inter,Roboto,Ubuntu,sans-serif}
+    header{padding:48px 16px 10px}
+    .wrap{max-width:1160px;margin:0 auto;padding:0 16px}
+    h1{margin:0 0 6px;letter-spacing:.02em;text-shadow:0 0 18px rgba(114,245,230,.35)}
+    .sub{color:var(--muted);margin:0 0 10px}
+    .controls{display:flex;flex-wrap:wrap;gap:10px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:10px}
+    .controls input,.controls select{background:#0c1020;color:var(--fg);border:1px solid var(--border);border-radius:12px;padding:.7rem .9rem;min-width:200px}
+    .spacer{flex:1}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin:18px 0 40px}
+    .card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:grid;grid-template-rows:160px auto}
+    .thumb{height:160px;position:relative;background:#0e1220}
+    .thumb img{width:100%;height:100%;object-fit:cover;display:block}
+    .glow{position:absolute;inset:auto 0 0 0;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent);box-shadow:0 0 18px var(--accent);opacity:.6}
+    .content{padding:14px}
+    .title{margin:2px 0 6px;font-size:1.05rem}
+    .chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 8px}
+    .chip{background:var(--chip);border:1px solid var(--chipB);border-radius:999px;padding:.18rem .5rem;font-size:.78rem;color:#d5e2ff}
+    .chip.ghost{background:var(--ghost);color:#c9cfe6}
+    .excerpt{color:var(--muted);font-size:.92rem;line-height:1.35;min-height:2.7em;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .row{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+    .score{background:linear-gradient(180deg,#1b2030,#0e1424);border:1px solid var(--chipB);border-radius:12px;padding:.35rem .55rem;min-width:3.1rem;text-align:center;font-weight:700}
+    .open{color:var(--accent);text-decoration:none;font-weight:600}
+    .open:hover{text-decoration:underline}
+    footer{color:var(--muted);text-align:center;padding:18px 0 36px;border-top:1px solid var(--border)}
+    .err{background:#2a1120;border:1px solid #713;padding:10px;border-radius:12px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Core Loop — Reviews & Analysis</h1>
+      <p class="sub">Browse the archive. Filter by platform and genre. Click a card to open the review.</p>
+
+      <div class="controls" role="region" aria-label="Filters and search">
+        <input id="q" type="search" placeholder="Search title, tags…" aria-label="Search" />
+        <select id="pf" aria-label="Platform"></select>
+        <select id="gf" aria-label="Genre"></select>
+        <div class="spacer"></div>
+        <select id="sf" aria-label="Sort">
+          <option value="date-desc">Newest first</option>
+          <option value="date-asc">Oldest first</option>
+          <option value="score-desc">Highest score</option>
+          <option value="score-asc">Lowest score</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="grid" class="grid" aria-label="Review cards"></section>
+    <div id="status"></div>
+  </main>
+
+  <footer>© <span id="yy"></span> Core Loop</footer>
+
+  <script defer>
+    // 0) page chrome
+    document.getElementById('yy').textContent = new Date().getFullYear();
+
+    // 1) predefined vocab for tidy filters
+    const PREDEFINED = {
+      platforms: ["PS2","PS3","PS4","PS5","Xbox","Xbox 360","Xbox One","Switch","PC"],
+      genres: ["Action","Adventure","RPG","Shooter","Platformer","Hack-and-Slash","Tactical","Horror","Stealth","Sports"]
+    };
+
+    // 2) elements
+    const els = {
+      grid: document.getElementById('grid'),
+      status: document.getElementById('status'),
+      q: document.getElementById('q'),
+      pf: document.getElementById('pf'),
+      gf: document.getElementById('gf'),
+      sf: document.getElementById('sf')
+    };
+
+    // 3) filter dropdowns
+    function fillSelect(el, label, list){
+      el.innerHTML = '';
+      const any = document.createElement('option');
+      any.value = ''; any.textContent = `All ${label}`; el.appendChild(any);
+      list.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; el.appendChild(o); });
+    }
+    fillSelect(els.pf, 'Platforms', PREDEFINED.platforms);
+    fillSelect(els.gf, 'Genres', PREDEFINED.genres);
+
+    // 4) render card
+    function safeScore(score){
+      if (score === null || score === undefined || score === '') return '—';
+      const n = Number(score);
+      return Number.isFinite(n) ? n.toFixed(1) : '—';
+    }
+    function card(r){
+      const plats = (r.platforms||[]).filter(p => PREDEFINED.platforms.includes(p));
+      const gens  = (r.genres||[]).filter(g => PREDEFINED.genres.includes(g));
+      const imgSrc = (r.coverImage && r.coverImage.trim()) || `images/${r.slug}.jpg`;
+      const href = `review.html?slug=${encodeURIComponent(r.slug)}`; // Chunk 3 will implement this page
+      return `
+      <article class="card">
+        <div class="thumb">
+          <img src="${imgSrc}" alt="Cover for ${r.title}"
+               onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?><svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;1200&quot; height=&quot;800&quot;><rect width=&quot;100%&quot; height=&quot;100%&quot; fill=&quot;%23101620&quot;/><text x=&quot;50%&quot; y=&quot;50%&quot; dominant-baseline=&quot;middle&quot; text-anchor=&quot;middle&quot; fill=&quot;%23a9b1c6&quot; font-family=&quot;Segoe UI, Roboto, Inter, sans-serif&quot; font-size=&quot;36&quot;>No cover</text></svg>';"/>
+          <div class="glow"></div>
+        </div>
+        <div class="content">
+          <h2 class="title">${r.title}</h2>
+          <div class="chips">
+            ${plats.map(p=>`<span class="chip">${p}</span>`).join('')}
+            ${gens.map(g=>`<span class="chip ghost">${g}</span>`).join('')}
+          </div>
+          <p class="excerpt">${r.excerpt||''}</p>
+          <div class="row">
+            <a class="open" href="${href}">Open review →</a>
+            <div class="score" title="Score">${safeScore(r.score)}</div>
+          </div>
+        </div>
+      </article>`;
+    }
+
+    // 5) sort/filter/render
+    function sortBy(list, mode){
+      const arr = [...list];
+      if(mode==='score-desc') arr.sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0));
+      if(mode==='score-asc')  arr.sort((a,b)=>(Number(a.score)||0)-(Number(b.score)||0));
+      if(mode==='date-asc')   arr.sort((a,b)=> (new Date(a.published||0)) - (new Date(b.published||0)));
+      if(mode==='date-desc')  arr.sort((a,b)=> (new Date(b.published||0)) - (new Date(a.published||0)));
+      return arr;
+    }
+
+    function apply(data){
+      const q = (els.q.value||'').toLowerCase();
+      const pf = els.pf.value, gf = els.gf.value, sf = els.sf.value;
+
+      let out = data.filter(r => {
+        const hay = [r.title, r.series, (r.tags||[]).join(' '), r.excerpt].join(' ').toLowerCase();
+        const mQ = !q || hay.includes(q);
+        const mP = !pf || (r.platforms||[]).includes(pf);
+        const mG = !gf || (r.genres||[]).includes(gf);
+        return mQ && mP && mG;
+      });
+      out = sortBy(out, sf);
+
+      els.grid.innerHTML = out.map(card).join('');
+      els.status.textContent = out.length ? '' : 'No results.';
+    }
+
+    // 6) load JSON + events
+    (async function init(){
+      try{
+        const res = await fetch('data/reviews.json');
+        if(!res.ok) throw new Error(res.status + ' ' + res.statusText);
+        const data = await res.json();
+        window.__REVIEWS__ = data;
+        apply(data);
+        ['input','change'].forEach(ev=>{
+          els.q.addEventListener(ev, ()=>apply(data));
+          els.pf.addEventListener(ev, ()=>apply(data));
+          els.gf.addEventListener(ev, ()=>apply(data));
+          els.sf.addEventListener(ev, ()=>apply(data));
+        });
+      }catch(err){
+        els.grid.innerHTML = '';
+        els.status.innerHTML =
+          `<div class="err">
+             Could not load <code>data/reviews.json</code>. If you opened the file directly,
+             run from a simple server or publish to GitHub Pages.
+             <br><small>${err.message}</small>
+           </div>`;
+      }
+    })();
+  </script>
+</body>
+</html>

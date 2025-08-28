@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Core Loop • Review</title>
+  <meta name="description" content="Full review on Core Loop." />
+  <style>
+    :root{--bg:#0a0b10;--fg:#e9ecf4;--muted:#a9b1c6;--panel:#0f1320;--border:#1a1f2f;--chip:#121829;--chipB:#202741;--ghost:#1e2440;--accent:#72f5e6;--radius:18px}
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,Segoe UI,Inter,Roboto,Ubuntu,sans-serif}
+    a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+    header,main,footer{max-width:900px;margin:0 auto;padding:0 16px}
+    header{padding:34px 16px 12px}
+    .back{display:inline-block;margin:6px 0 14px}
+    h1{margin:8px 0 6px;letter-spacing:.01em;text-shadow:0 0 14px rgba(114,245,230,.25)}
+    .lede{color:var(--muted);font-size:1.05rem;line-height:1.45;margin:8px 0 18px}
+    .meta{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 18px}
+    .chip{background:#0c1020;border:1px solid var(--border);border-radius:999px;padding:.22rem .6rem;font-size:.82rem;color:#d5e2ff}
+    .chip.ghost{background:#1b2140;color:#c9cfe6}
+    .cover{width:100%;max-height:420px;object-fit:cover;border-radius:16px;border:1px solid var(--border);background:#0e1220}
+    article{margin:22px 0 36px}
+    article p{line-height:1.65;margin:0 0 1rem}
+    .byline{color:var(--muted);font-size:.9rem;margin-top:6px}
+    .err{background:#2a1120;border:1px solid #713;padding:12px;border-radius:12px;margin:20px 0}
+    footer{color:var(--muted);text-align:center;padding:24px 0 48px;border-top:1px solid var(--border)}
+  </style>
+</head>
+<body>
+  <header>
+    <a class="back" href="index.html">← Back to catalog</a>
+    <div id="header"></div>
+  </header>
+
+  <main>
+    <img id="cover" class="cover" alt="" />
+    <div class="meta" id="meta"></div>
+
+    <article id="body"></article>
+    <div id="status"></div>
+  </main>
+
+  <footer>© <span id="yy"></span> Core Loop</footer>
+
+  <script defer>
+    document.getElementById('yy').textContent = new Date().getFullYear();
+
+    const qs = new URLSearchParams(location.search);
+    const slug = qs.get('slug');
+
+    const els = {
+      header: document.getElementById('header'),
+      cover: document.getElementById('cover'),
+      meta: document.getElementById('meta'),
+      body: document.getElementById('body'),
+      status: document.getElementById('status')
+    };
+
+    function safeText(x){ return (x ?? '').toString(); }
+
+    function renderHeader(r){
+      const title = safeText(r.title);
+      const excerpt = safeText(r.excerpt);
+      const published = r.published ? new Date(r.published) : null;
+
+      els.header.innerHTML = `
+        <h1>${title}</h1>
+        ${excerpt ? `<p class="lede">${excerpt}</p>` : ''}
+        <div class="byline">
+          ${r.author ? `By ${r.author}` : ''}${published ? ` • ${published.toLocaleDateString()}` : ''}
+        </div>
+      `;
+    }
+
+    function renderMeta(r){
+      const chips = [];
+      (r.platforms||[]).forEach(p => chips.push(`<span class="chip">${p}</span>`));
+      (r.genres||[]).forEach(g => chips.push(`<span class="chip ghost">${g}</span>`));
+      if (r.score !== undefined && r.score !== null && r.score !== '') {
+        chips.push(`<span class="chip">Score: ${Number(r.score).toFixed(1)}</span>`);
+      }
+      els.meta.innerHTML = chips.join('');
+    }
+
+    function renderCover(r){
+      const src = (r.coverImage && r.coverImage.trim()) || `images/${r.slug}.jpg`;
+      els.cover.src = src;
+      els.cover.alt = `Cover for ${r.title}`;
+      els.cover.onerror = () => {
+        els.cover.onerror = null;
+        els.cover.src = 'data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8"?><svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="100%" height="100%" fill="#101620"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#a9b1c6" font-family="Segoe UI, Roboto, Inter, sans-serif" font-size="36">No cover</text></svg>';
+      };
+    }
+
+    function renderBody(r){
+      // Straight paragraphs: each string in r.body becomes a <p>
+      const lines = Array.isArray(r.body) ? r.body : [];
+      els.body.innerHTML = lines.map(s => `<p>${s}</p>`).join('');
+    }
+
+    (async function init(){
+      if(!slug){
+        els.status.innerHTML = `<div class="err">Missing <code>?slug=</code> in the URL.</div>`;
+        return;
+      }
+      try{
+        const res = await fetch('data/reviews.json');
+        if(!res.ok) throw new Error(res.status + ' ' + res.statusText);
+        const data = await res.json();
+        const review = data.find(r => r.slug === slug);
+        if(!review){
+          els.status.innerHTML = `<div class="err">No review found for slug <code>${slug}</code>.</div>`;
+          return;
+        }
+        renderHeader(review);
+        renderCover(review);
+        renderMeta(review);
+        renderBody(review);
+      }catch(err){
+        els.status.innerHTML = `<div class="err">Could not load <code>data/reviews.json</code> (${err.message}).</div>`;
+      }
+    })();
+  </script>
+</body>
+</html>
