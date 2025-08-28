@@ -1,0 +1,74 @@
+[
+  {
+    "slug": "x-men-origins-wolverine-ps3",
+    "title": "X-Men Origins: Wolverine (PS3)",
+    "author": "You",
+    "published": "2009-05-01",
+    "updated": "2025-08-25",
+    "platforms": ["PS3"],
+    "score": 7.5,
+    "genres": ["Action", "Hack-and-Slash"],
+    "series": "X-Men",
+    "tags": ["Licensed", "Movie tie-in", "Retro"],
+    "excerpt": "Visceral, fast, and gloriously messy—Wolverine’s acrobatic move set and ‘Fury’ attacks deliver the comic’s feral brutality. Technical hiccups aside, it’s a blood-soaked cult classic.",
+    "body": [
+      "# Overview",
+      "Wolverine on PS3 hits harder than you'd expect from a movie tie-in. Fluid combos and grisly finishers keep the pace brisk.",
+      "## Combat feel",
+      "Light/heavy chains snap together cleanly. Bosses are a touch spongey but not dull.",
+      "## Low points",
+      "Recycled arenas, some camera quirks. Story mirrors the film.",
+      "## Verdict",
+      "It's not God of War, but it has claws—literally and mechanically."
+    ],
+    "bodyFormat": "markdown"
+  },
+  {
+    "slug": "tom-clancys-ghost-recon-ps2",
+    "title": "Tom Clancy's Ghost Recon (PS2)",
+    "author": "You",
+    "published": "2002-11-12",
+    "updated": "2025-08-25",
+    "platforms": ["PS2"],
+    "score": 7.0,
+    "genres": ["Shooter", "Tactical"],
+    "series": "Tom Clancy's Ghost Recon",
+    "tags": ["Tactical", "Squad-based", "Military"],
+    "excerpt": "One-shot kills, no regen, and open-ended objectives forge a gritty, consequence-heavy campaign. Not for everyone—but for tactics fans, it’s a landmark with bite.",
+    "body": [
+      "# Overview",
+      "On PS2, Ghost Recon brought tactical realism to consoles, trading flash for deliberate squad-based play.",
+      "## Tactical gameplay",
+      "Managing fields of fire and coordinating AI teammates mattered more than twitch reflexes.",
+      "## Low points",
+      "Graphics and controls felt clunky by comparison with flashier shooters.",
+      "## Verdict",
+      "Not for everyone, but a milestone in tactical realism on console."
+    ],
+    "bodyFormat": "markdown"
+  },
+  {
+    "slug": "resistance-3-ps3",
+    "title": "Resistance 3 (PS3)",
+    "author": "You",
+    "published": "2011-09-06",
+    "updated": "2025-08-25",
+    "platforms": ["PS3"],
+    "score": 8.5,
+    "genres": ["Shooter", "Action"],
+    "series": "Resistance",
+    "tags": ["Sci-Fi", "First-Person Shooter"],
+    "excerpt": "Resistance 3 rebuilds the series’ reputation with a focused story, a glorious weapon wheel, and smart enemy design. Shorter, tighter, and more human—an underrated finale that’s simply a joy to play.",
+    "body": [
+      "# Overview",
+      "Resistance 3 shifts to a more personal story with a grounded, desperate tone and strong atmosphere.",
+      "## Weapons",
+      "Insomniac's trademark creativity shines — from mutant-incinerating flamethrowers to inventive alt-fires.",
+      "## Low points",
+      "Occasional pacing dips and uneven difficulty spikes.",
+      "## Verdict",
+      "A fitting, underrated finale to the Resistance trilogy that still stands out today."
+    ],
+    "bodyFormat": "markdown"
+  }
+]
