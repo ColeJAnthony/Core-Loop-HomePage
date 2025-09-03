@@ -38,7 +38,27 @@
       border-right: 1px solid #1a1a1a;
       display: flex;
       justify-content: flex-start;
+      transform: translateX(-100%);         /* hidden by default */
+      transition: transform 200ms ease;     /* slide animation */
+      z-index: 1000;
     }
+
+        /* ===== Collapsible toggle (checkbox + label button) ===== */
+    .nav-toggle {
+      position: fixed; left: 10px; top: 10px;
+      opacity: 0; pointer-events: none; z-index: 1002;
+    }
+    .hamburger {
+      position: fixed; left: 10px; top: 10px;
+      width: 40px; height: 40px; display: grid; place-items: center;
+      background: #000; border: 1px solid #1a1a1a; border-radius: 10px;
+      cursor: pointer; z-index: 1001;
+    }
+    .hamburger svg { width: 22px; height: 22px; display: block; }
+
+    /* Show ribbon when toggled on; also push content if you want */
+    #nav-toggle:checked ~ .ribbon { transform: translateX(0); }
+    #nav-toggle:checked ~ .content { margin-left: var(--ribbon-w); }
 
     /* Stack of icons; first icon sits 20vh from top */
     .nav-stack {
@@ -105,7 +125,17 @@
   </style>
 </head>
 <body>
-  <div class="logo-container">
+   <!-- Collapsible ribbon toggle -->
+  <input type="checkbox" id="nav-toggle" class="nav-toggle" />
+  <label for="nav-toggle" class="hamburger" aria-label="Toggle menu">
+    <svg viewBox="0 0 24 24" fill="white" aria-hidden="true">
+      <rect x="3" y="6" width="18" height="2"/>
+      <rect x="3" y="11" width="18" height="2"/>
+      <rect x="3" y="16" width="18" height="2"/>
+    </svg>
+  </label>
+
+  <div class ="logo-container">
     <img src="./images/core-loop-media-logo.png" alt="Core Loop Media" class="site-logo">
   </div>
 
@@ -244,6 +274,7 @@
       to { --angle: 1turn; }
     }
   </style>
+
 
 
 
