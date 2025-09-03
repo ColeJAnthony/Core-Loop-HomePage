@@ -34,12 +34,34 @@
     .open:hover{text-decoration:underline}
     footer{color:var(--muted);text-align:center;padding:18px 0 36px;border-top:1px solid var(--border)}
     .err{background:#2a1120;border:1px solid #713;padding:10px;border-radius:12px}
+    
+    /* Sticker-in-heading layout */
+h1.brand {
+  display: flex;
+  align-items: baseline;
+  gap: .5ch; /* spacing between logo and text */
+}
+
+h1.brand .logo {
+  height: 1.05em; /* matches original Core Loop text height */
+  width: auto;
+  transform: translateY(.06em); /* small vertical nudge */
+  filter: drop-shadow(0 0 18px rgba(114,245,230,.35));
+}
+
+h1.brand .tag {
+  letter-spacing: .02em;
+}
+
   </style>
 </head>
 <body>
   <header>
     <div class="wrap">
-      <h1>Core Loop — Reviews & Analysis</h1>
+      <h1 class="brand">
+        <img class="logo" src="coreloop-logo.png" alt="Core Loop" />
+         <span class="tag">— Reviews & Analysis</span>
+      </h1>
       <p class="sub">Browse the archive. Filter by platform and genre. Click a card to open the review.</p>
 
       <div class="controls" role="region" aria-label="Filters and search">
@@ -181,3 +203,4 @@
   </script>
 </body>
 </html>
+
